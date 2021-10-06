@@ -58,7 +58,28 @@ function ListItem({
   )
 }
 
-ListItem = React.memo(ListItem)
+const checkIndex = (prevProps, nextProps) => {
+  if (nextProps.getItemProps !== prevProps.getItemProps) return false
+  if (nextProps.item !== prevProps.item) return false
+  if (nextProps.index !== prevProps.index) return false
+  // if (nextProps.selectedItem !== prevProps.selectedItem) return false
+  if (nextProps.selectedItem !== prevProps.selectedItem) {
+    const nextSelected = nextProps.selectedItem ? nextProps.selectedItem.name : null
+    const prevSelected = prevProps.selectedItem ? prevProps.selectedItem.name : null
+    const isSelected = prevProps.item.name === nextSelected
+    const wasSelected = prevProps.item.name === prevSelected
+    if (isSelected !== wasSelected) return false
+  }
+  // if (nextProps.highlightedIndex !== prevProps.highlightedIndex) return false
+  if (nextProps.highlightedIndex !== prevProps.highlightedIndex) {
+    const isHovered = nextProps.highlightedIndex === prevProps.index
+    const isUnhovered = prevProps.highlightedIndex === prevProps.index
+    if (isHovered || isUnhovered) return false
+  }
+  return true
+}
+
+ListItem = React.memo(ListItem, checkIndex)
 
 function App() {
   const forceRerender = useForceRerender()
